@@ -189,7 +189,13 @@ class ProfCoursTest extends TestCase
         * Question 8 : Dans la fonction « testAdd() », s’inspirer de test d’ajout des profs pour tester l’ajout des cours.   
         *
         */
+        // Vérification : comparer le nombre attendu avec le nombre réel
+        $expectedCours = count(self::$cours_a);
+        $numCoursRecords = Cours::count($conn);
         
+        // Assert pour vérifier si tous les cours sont bien enregistrés
+        $this->assertEquals($expectedCours, $numCoursRecords, "Enregistrement des cours ...\n");
+        $this->assertCount($numCoursRecords, self::$cours_a, "Enregistrement des cours ...\n");
     }
     
     
