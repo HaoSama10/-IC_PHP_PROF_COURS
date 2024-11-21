@@ -206,28 +206,33 @@ class ProfCoursTest extends TestCase
      */
     public function testPrintAll()
     {
-        print __METHOD__."\n";
+        print __METHOD__ . "\n";
         $conn = $this->getConnection();
-
+    
         // Prof
         $record_prof_a = Prof::printAll($conn);
         print "########## - LISTE DES PROFS - AVANT TOUT ########## \n";
-        foreach ( $record_prof_a as $record_prof ) {
+        foreach ($record_prof_a as $record_prof) {
             print $record_prof;
         }
         print "################################################################\n\n";
         $this->assertCount(count(Self::$prof_a), $record_prof_a, "Nombre d'enregistrement égale pour Prof\n");
 
-        
-        // Cours
-        
         /**
         *
         * Question 9 : Dans la fonction « testPrintAll() », 
         * s’inspirer de test de la sélection et affichage des profs pour tester la sélection et l’affichage des cours.   
         *
         */
-  
+        
+        // Cours
+        $record_cours_a = Cours::printAll($conn); // Appel de la méthode printAll() pour les cours
+        print "########## - LISTE DES COURS - AVANT TOUT ########## \n";
+        foreach ($record_cours_a as $record_cours) {
+            print $record_cours;
+        }
+        print "################################################################\n\n";
+        $this->assertCount(count(Self::$cours_a), $record_cours_a, "Nombre d'enregistrement égale pour Cours\n");
         
     }
     
@@ -258,51 +263,50 @@ class ProfCoursTest extends TestCase
      */
     public function testPrintOne()
     {
-        print __METHOD__."\n";
+        print __METHOD__ . "\n";
         $conn = $this->getConnection();
-
+    
         // Prof
         $prof = Prof::printOne($conn);
         $prof_str = $prof->__toString();
-        print "########## - 1e PROF EN BASE - ########## \n";
-        print $prof_str."\n";
+        print "########## - 1er PROF EN BASE - ########## \n";
+        print $prof_str . "\n";
         print "################################################################\n\n";
         $expected = self::$prof_a[0]->__toString();
         $this->assertEquals($expected, $prof_str, "Prof \n");
-
+    
         // Cours
-        
-        /**
-        *
-        * Question 10 :	Dans la fonction « testPrintOne() », 
-        * s’inspirer de test de sélection et affichage du premier prof pour tester la sélection et l’affichage du premier cours dans la base.
-        *
-        */
-        
-           
-
+        $cours = Cours::printOne($conn); // Appel à la méthode printOne() pour les cours
+        $cours_str = $cours->__toString();
+        print "########## - 1er COURS EN BASE - ########## \n";
+        print $cours_str . "\n";
+        print "################################################################\n\n";
+        $expected = self::$cours_a[0]->__toString();
+        $this->assertEquals($expected, $cours_str, "Cours \n");
+    
         // Avec des ID
         $idProf = 10;
         $idCours = 9;
+    
         // Prof
         $prof = Prof::printOne($conn, $idProf);
         $prof_str = $prof->__toString();
         print "########## - ${idProf}e PROF EN BASE - ########## \n";
-        print $prof_str."\n";
+        print $prof_str . "\n";
         print "################################################################\n\n";
-        $expected = self::$prof_a[$idProf-1]->__toString();
+        $expected = self::$prof_a[$idProf - 1]->__toString();
         $this->assertEquals($expected, $prof_str, "Prof \n");
-
+    
         // Cours
-        $cours = Cours::printOne($conn, $idCours);
+        $cours = Cours::printOne($conn, $idCours); // Appel avec un ID spécifique pour les cours
         $cours_str = $cours->__toString();
         print "@@@@@@@@@@@@@ - ${idCours}e COURS EN BASE - @@@@@@@@@@@@@ \n";
-        print $cours_str."\n";
+        print $cours_str . "\n";
         print "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n\n";
-        $expected = self::$cours_a[$idCours-1]->__toString();
+        $expected = self::$cours_a[$idCours - 1]->__toString();
         $this->assertEquals($expected, $cours_str, "Cours \n");
-
     }
+
     
     
     /**
@@ -313,49 +317,44 @@ class ProfCoursTest extends TestCase
      */
     public function testUpdateOne()
     {
-        print __METHOD__."\n";
+        print __METHOD__ . "\n";
         $conn = $this->getConnection();
-
+    
         // Avec Id en dur.
         $idProf = 10;
         $idCours = 9;
-
+    
         // Prof
-        $prof = new Prof($this->nom, $this->prenom, $this->date, $this->lieu);
-        $val = $prof->updateOne($conn, $idProf);
-        $expected_prof_str = $prof->__toString();
-        $record_prof = Prof::printOne($conn, $idProf);
+        $prof = new Prof($this->nom, $this->prenom, $this->date, $this->lieu); // Instanciation avec de nouvelles valeurs
+        $val = $prof->updateOne($conn, $idProf); // Mise à jour du professeur
+        $expected_prof_str = $prof->__toString(); // Valeur attendue après mise à jour
+        $record_prof = Prof::printOne($conn, $idProf); // Récupération après mise à jour
         $this->assertEquals($expected_prof_str, $record_prof->__toString(), "Update du prof $idProf ...\n");
         $this->assertTrue($val, "Update du prof num $idProf ...\n");
-
+    
         // Cours
-        
-        /**
-        *
-        * Question 11 :	Dans la fonction « testUpdateOne() », 
-        * s’inspirer de test de la modification du prof avec idProf= 10 pour tester la modification du cours dans ayant comme idCours = 9.
-        *
-        */
-       
-        
-        
-        // Prof
-        
+        $cours = new Cours($this->titre, $this->description, $this->duree); // Instanciation avec de nouvelles valeurs
+        $val = $cours->updateOne($conn, $idCours); // Mise à jour du cours
+        $expected_cours_str = $cours->__toString(); // Valeur attendue après mise à jour
+        $record_cours = Cours::printOne($conn, $idCours); // Récupération après mise à jour
+        $this->assertEquals($expected_cours_str, $record_cours->__toString(), "Update du cours $idCours ...\n");
+        $this->assertTrue($val, "Update du cours num $idCours ...\n");
+    
+        // Prof - Liste après update
         print "########## - LISTE DES PROFS - APRES UPDATE DU PROF NUM $idProf ########## \n";
-        foreach ( $record_prof_a = Prof::printAll($conn) as $record_prof ) {
+        foreach ($record_prof_a = Prof::printAll($conn) as $record_prof) {
             print $record_prof;
         }
         print "################################################################\n\n";
-        
-        
-        // Cours
-        
+    
+        // Cours - Liste après update
         print "@@@@@@@@@@@@@ - LISTE DES COURS - APRES UPDATE DU COURS NUM $idCours @@@@@@@@@@@@@ \n";
-        foreach( $record_cours_a = Cours::printAll($conn) as $record_cours) {
+        foreach ($record_cours_a = Cours::printAll($conn) as $record_cours) {
             print $record_cours;
         }
         print "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n\n";
     }
+
 
     /**
      *
